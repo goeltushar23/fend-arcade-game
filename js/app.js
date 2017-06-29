@@ -29,7 +29,7 @@ Enemy.prototype.setSpeed = function() {
 
 /**
  * Update the enemy's position, required method for game
- * @param {float} a time delta between ticks
+ * @param {float} dt: a time delta between ticks
  */
 Enemy.prototype.update = function(dt) {
     // Update the enemy location:
@@ -101,7 +101,7 @@ Player.prototype.handleInput = function(keyCode) {
     } else if (keyCode === 'down') {
         this.y += 83; // move down
     } else if (keyCode === 'reset') {
-        resetGame();
+        resetGame(); // resets the game
         return;
     }
 
@@ -129,7 +129,6 @@ Player.prototype.reset = function() {
 
 var checkCollisions = function(enemyObj) {
     if (enemyObj.y === player.y && enemyObj.x + 75 >= player.x && enemyObj.x <= player.x + 75) {
-        //displayMessage("Hello");
         player.reset();
         pauseGame();
 
@@ -139,7 +138,11 @@ var checkCollisions = function(enemyObj) {
     }
 };
 
-// Function to display player's score
+/**
+ * Displays the message on the canvas
+ * @param  {string} message:Message to be displayed
+ * @param  {string} type: success/error
+ */
 var displayMessage = function(message, type) {
     ctx.font = '40px Comic Sans MS';
     ctx.textAlign = 'center';
@@ -166,8 +169,7 @@ var displayMessage = function(message, type) {
 var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// This listens for key presses and sends the keys to Player.handleInput() method
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
