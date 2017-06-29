@@ -43,7 +43,18 @@ Enemy.prototype.update = function(dt) {
     }
 
     // Handle collision with the Player
-    checkCollisions(this);
+    this.checkCollision();
+};
+
+Enemy.prototype.checkCollision = function() {
+    if (this.y === player.y && this.x + 75 >= player.x && this.x <= player.x + 75) {
+        player.reset();
+        pauseGame();
+
+        setTimeout(function() {
+            displayMessage('You Lost!', 'error');
+        }, 100);
+    }
 };
 
 /**
@@ -127,16 +138,6 @@ Player.prototype.reset = function() {
     this.setLocation();
 };
 
-var checkCollisions = function(enemyObj) {
-    if (enemyObj.y === player.y && enemyObj.x + 75 >= player.x && enemyObj.x <= player.x + 75) {
-        player.reset();
-        pauseGame();
-
-        setTimeout(function() {
-            displayMessage('You Lost!', 'error');
-        }, 100);
-    }
-};
 
 /**
  * Displays the message on the canvas
