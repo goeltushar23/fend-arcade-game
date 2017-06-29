@@ -4,13 +4,9 @@
 
 This game is a variation of the classic Frogger Arcade game.
 
-**Goals/Winning**
+**Goals/Winning**: Move your Player character to the water area without colliding with the enemy bugs.
 
-Move your Player character to the water area without colliding with the enemy bugs.
-
-**Movement and Control**
-
-Navigate your Player Character using up, down, left and right keys
+**Movement and Control**: Navigate your Player Character using up, down, left and right keys
 
 
 ## How to Run:
