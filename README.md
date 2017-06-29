@@ -11,8 +11,6 @@ This game is a variation of the classic Frogger Arcade game.
 
 ## How to Run:
 
-Installation
-
 To run the application:
 
 1. Download the GitHub zip file or clone the repository onto your local workstation:
