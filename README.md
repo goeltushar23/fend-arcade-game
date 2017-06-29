@@ -9,7 +9,7 @@ This game is a variation of the classic Frogger Arcade game.
 **Movement and Control**: Navigate your Player Character using up, down, left and right keys
 
 
-## How to Run:
+## How to Run
 
 To run the application:
 
