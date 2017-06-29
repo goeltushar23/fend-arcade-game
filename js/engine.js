@@ -23,7 +23,8 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        gameState = 'running';
 
     canvas.width = 505;
     canvas.height = 606;
@@ -39,6 +40,10 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
+
+        if (gameState === 'paused')
+            return;
+
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
@@ -65,8 +70,6 @@ var Engine = (function(global) {
      */
     function init() {
         reset();
-        lastTime = Date.now();
-        main();
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -108,12 +111,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -159,7 +162,13 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        gameState = 'running';
+        lastTime = Date.now();
+        main();
+    }
+
+    function pause() {
+        gameState = 'paused';
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -180,4 +189,6 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.pauseGame = pause;
+    global.resetGame = reset;
 })(this);

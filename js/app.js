@@ -1,55 +1,87 @@
-// Enemies our player must avoid
+/**
+ * Enemy Class:
+ * for defining Enemies our player must avoid
+ */
 var Enemy = function() {
     // Enemy Image Resource
     this.sprite = 'images/enemy-bug.png';
 
-    // setting the enemy intial location
-    this.initialLocation = { x: 0, y: 101 }; // this variable helps in resetting
+    // Setting Enemy Location
+    this.setLocation();
 
+    // Setting Enemy speed
+    this.setSpeed();
+};
+
+Enemy.prototype.setLocation = function() {
+    // Randomly choosing y for the 3 brick rows
+    this.initialLocation = { x: -101, y: 41.5 + Math.floor((Math.random() * 3)) * 83 };
+
+    // Setting Enemy x and y Coordinates
     this.x = this.initialLocation.x;
     this.y = this.initialLocation.y;
-
-    // setting the enemy speed
-    // this.speed = 
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
+Enemy.prototype.setSpeed = function() {
+    // Randomly Choosing Speeds
+    this.speed = 120 + Math.floor((Math.random() * 4) + 1) * 30;
+};
+
+/**
+ * Update the enemy's position, required method for game
+ * @param {float} a time delta between ticks
+ */
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    // Update the enemy location:
+    // Multiplying any movement by the dt parameter which will ensures 
+    // that the game runs at the same speed for all computers.
+    this.x += this.speed * dt;
 
-    // updates the enemy location
-    this.x *= dt;
+    if (this.x > 505) {
+        this.setLocation();
+        this.setSpeed();
+    }
 
-    // handles collision with the Player
+    // Handle collision with the Player
+    checkCollisions(this);
 };
 
-// Draw the enemy on the screen, required method for game
+/**
+ * Draw the enemy on the screen, required method for game
+ */
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+Enemy.prototype.reset = function() {
+    this.setLocation();
+    this.setSpeed();
+};
+
+/**
+ * Player Class:
+ * Our main Player will be instantiated using this Class
+ */
 var Player = function() {
+    // Player Image Resource
     this.sprite = 'images/char-boy.png';
 
-    // setting the enemy intial location
-    this.initialLocation = { x: 250, y: 505 }; // this variable helps in resetting
+    // Setting Player Location
+    this.setLocation();
+};
 
+Player.prototype.setLocation = function() {
+    // this variable helps in resetting
+    this.initialLocation = { x: 202.5, y: 373.5 };
+
+    // setting the Player's intial location
     this.x = this.initialLocation.x;
     this.y = this.initialLocation.y;
 };
 
-Player.prototype.update = function(dt) {
-    // TODO: 
-    // similar to Enemy Update method
-    this.x *= dt
-
-}
+Player.prototype.update = function() {
+    // pass: Not needed
+};
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -60,38 +92,79 @@ Player.prototype.render = function() {
  * @param  {integer} keyCode
  */
 Player.prototype.handleInput = function(keyCode) {
-    if (keyCode === 37)
+    if (keyCode === 'left') {
         this.x -= 101; // move left
-    else if (keyCode === 38)
-        this.y -= 101; // move up
-    else if (keyCode === 39)
+    } else if (keyCode === 'up') {
+        this.y -= 83; // move up
+    } else if (keyCode === 'right') {
         this.x += 101; // move right
-    else if (keyCode === 40)
-        this.y += 101; // move down
+    } else if (keyCode === 'down') {
+        this.y += 83; // move down
+    } else if (keyCode === 'reset') {
+        resetGame();
+        return;
+    }
 
     // Checking that Player should not go off Screen
     this.x = this.x < 0 ? 0 : this.x;
     this.x = this.x > 404 ? 404 : this.x;
-    this.y = this.y > 505 ? 505 : this.y;
+    this.y = this.y > this.initialLocation.y ? this.initialLocation.y : this.y;
 
-    // if player reached water then reset the game
-    this.y = this.y < 202 ? this.reset() ? this.y;
-}
+    // If player reached water then reset the game
+    if (this.y < 41.5) {
+        this.reset();
+        pauseGame();
+        setTimeout(function() {
+            displayMessage('You Won!', 'success');
+        }, 100);
+    }
+};
 
 /**
  * Resets the Player to Start Point
  */
-Player.protype.reset = function() {
-    this.x = this.initialLocation.x;
-    this.y = this.initialLocation.y;
-}
+Player.prototype.reset = function() {
+    this.setLocation();
+};
+
+var checkCollisions = function(enemyObj) {
+    if (enemyObj.y === player.y && enemyObj.x + 75 >= player.x && enemyObj.x <= player.x + 75) {
+        //displayMessage("Hello");
+        player.reset();
+        pauseGame();
+
+        setTimeout(function() {
+            displayMessage('You Lost!', 'error');
+        }, 100);
+    }
+};
+
+// Function to display player's score
+var displayMessage = function(message, type) {
+    ctx.font = '40px Comic Sans MS';
+    ctx.textAlign = 'center';
+
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 50, 505, 535);
+
+    ctx.globalAlpha = 1.0;
+
+    if (type === 'success')
+        ctx.fillStyle = 'orange';
+    else if (type === 'error')
+        ctx.fillStyle = 'red';
+    else
+        ctx.fillStyle = 'white';
+
+    ctx.fillText(message, 252.5, 303);
+    ctx.fillText('Press `r` to restart', 252.5, 353);
+};
 
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-// TODO:
-
+// Now instantiating our objects.
+var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
+var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -100,7 +173,8 @@ document.addEventListener('keyup', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        82: 'reset'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
